@@ -1,18 +1,20 @@
-import { fromEvent, map, tap } from 'rxjs';
+import { Observable, map, fromEvent, tap } from 'rxjs';
 import '../header';
 
-const input = <HTMLInputElement>document.querySelector('#input')!;
-const button = document.querySelector('#clear')!;
+const button = <HTMLElement>document.querySelector('button');
+const input = <HTMLInputElement>document.querySelector('input');
 
-const click$ = fromEvent<MouseEvent>(button, 'click');
+const buttonTap = <HTMLElement>document.getElementById('tap');
+const inputTap = <HTMLInputElement>document.getElementById('inputTap');
 
-click$
+const clicks$: Observable<Event> = fromEvent(button, 'click');
+const clickTap$: Observable<Event> = fromEvent(buttonTap, 'click');
+
+clicks$.pipe(map(() => '')).subscribe((val) => (input.value = val));
+
+clickTap$
   .pipe(
-    // transform
-    map(() => ''),
-    // for side effects
-    tap((value: string) => {
-      input.value = value;
-    })
+    map(() => ''), //transform
+    tap((val) => (inputTap.value = val)) //side effects
   )
   .subscribe();
