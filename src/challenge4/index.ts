@@ -1,25 +1,33 @@
-import { Subject, fromEvent, map, merge, tap, Observable } from 'rxjs';
+import { Observable, tap, Subject, fromEvent, map, merge } from 'rxjs';
 import '../header';
 
 const buttons = Array.from(document.querySelectorAll('button'));
-const label = <HTMLLabelElement>document.querySelector('#label')!;
+console.log('Array from NodeList => ', buttons);
 
+const label = <HTMLLabelElement>document.getElementById('label');
 const state$ = new Subject<string>();
 
-const getTextContent = (event: Event) => (<HTMLButtonElement>event.target).textContent!;
-
-const buttonsObservables: Observable<string>[] = buttons.map((button) =>
-  fromEvent<Event>(button, 'click').pipe(map(getTextContent))
+const buttonsObservables: Observable<string | null>[] = buttons.map((button) =>
+  fromEvent(button, 'click').pipe(map(() => button.textContent))
 );
 
+console.log('Mapped each Button to fromEvent => ', buttonsObservables);
+
+// Subscribing to Click Events & Emitting value for state$
 merge(...buttonsObservables)
-  .pipe(tap((str: string) => state$.next(str)))
+  .pipe(
+    tap((val: any) => {
+      console.log('Sending next value to state$ =>', val);
+      state$.next(val);
+    })
+  )
   .subscribe();
 
+// Subscribe to Subject - state$
 state$
   .pipe(
-    tap((value: string) => {
-      label.textContent = value;
+    tap((val) => {
+      label.textContent = val;
     })
   )
   .subscribe();
