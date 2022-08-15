@@ -1,42 +1,31 @@
-import { BehaviorSubject, fromEvent, map, merge, startWith, tap, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, fromEvent, map, merge, startWith, withLatestFrom, tap, Observable } from 'rxjs';
 import '../header';
 
-const minus = <HTMLButtonElement>document.querySelector('#minus')!;
-const plus = <HTMLButtonElement>document.querySelector('#plus')!;
-const input = <HTMLInputElement>document.querySelector('#input')!;
+const plus = <HTMLButtonElement>document.getElementById('plus');
+const minus = <HTMLButtonElement>document.getElementById('minus');
+const input = <HTMLInputElement>document.getElementById('input');
 
-const state$ = new BehaviorSubject<number>(0);
-const minus$ = fromEvent<Event>(minus, 'click').pipe(map(() => -1));
-const plus$ = fromEvent<Event>(plus, 'click').pipe(map(() => 1));
-const input$ = fromEvent<Event>(input, 'input').pipe(
-  map((e: Event) => (<HTMLInputElement>e.target).value),
-  map((value: string) => parseInt(value)),
-  map((value: number) => (Number.isNaN(value) ? 0 : value))
+const plus$: Observable<number> = fromEvent(plus, 'click').pipe(map(() => 1));
+const minus$: Observable<number> = fromEvent(minus, 'click').pipe(map(() => -1));
+const input$: Observable<number> = fromEvent(input, 'input').pipe(
+  map((event: Event) => {
+    return +(<HTMLInputElement>event.target).value;
+  })
 );
+const state$ = new BehaviorSubject(0);
 
-merge(minus$, plus$)
+merge(plus$, minus$)
   .pipe(
     startWith(0),
     withLatestFrom(state$),
-    map(([change, total]: [number, number]) => total + change),
-    tap((total: number) => {
-      state$.next(total);
-    })
+    map(([change, total]: [number, number]) => {
+      console.log(`change: ${change}, total: ${total}`);
+      return change + total;
+    }),
+    tap((val: number) => state$.next(val))
   )
   .subscribe();
 
-input$
-  .pipe(
-    tap((value: number) => {
-      state$.next(value);
-    })
-  )
-  .subscribe();
+input$.pipe(tap((val: number) => state$.next(val))).subscribe();
 
-state$
-  .pipe(
-    tap((value: number) => {
-      input.value = String(value);
-    })
-  )
-  .subscribe();
+state$.pipe(tap((val: number) => (input.value = val.toString()))).subscribe();
