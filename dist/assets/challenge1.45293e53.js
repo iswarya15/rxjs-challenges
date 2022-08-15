@@ -1,0 +1,1 @@
+import"./style.7f2dd081.js";import{f as e}from"./header.5ef40da5.js";import{m as c,t as o}from"./tap.396166da.js";const n=document.querySelector("button"),p=document.querySelector("input"),u=document.getElementById("tap"),i=document.getElementById("inputTap"),m=e(n,"click"),s=e(u,"click");m.pipe(c(()=>"")).subscribe(t=>p.value=t);s.pipe(c(()=>""),o(t=>i.value=t)).subscribe();
