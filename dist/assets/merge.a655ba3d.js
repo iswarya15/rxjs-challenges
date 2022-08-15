@@ -1,0 +1,1 @@
+import{m as n}from"./mergeAll.65ca6efe.js";import{i as t}from"./header.5ef40da5.js";import{E as s}from"./empty.08726d36.js";import{p,a as f,f as u}from"./from.1e9f5128.js";function h(){for(var r=[],e=0;e<arguments.length;e++)r[e]=arguments[e];var o=p(r),a=f(r,1/0),m=r;return m.length?m.length===1?t(m[0]):n(a)(u(m,o)):s}export{h as m};

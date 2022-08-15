@@ -1,0 +1,1 @@
+import"./style.7f2dd081.js";import{f as o}from"./header.5ef40da5.js";import{m as n,t as r}from"./tap.396166da.js";const e=document.querySelector("#input"),l=document.querySelector("#label1"),p=document.querySelector("#label2"),u=o(e,"input");u.pipe(n(()=>e.value),r(t=>{l.textContent=t,p.textContent=t.split("").reverse().join("")})).subscribe();
