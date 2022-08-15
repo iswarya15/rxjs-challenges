@@ -1,21 +1,22 @@
-import { fromEvent, map, merge, scan, startWith, tap } from 'rxjs';
+import { BehaviorSubject, fromEvent, map, merge, Observable, tap } from 'rxjs';
 import '../header';
 
-const minus = <HTMLButtonElement>document.querySelector('#minus')!;
-const plus = <HTMLButtonElement>document.querySelector('#plus')!;
-const label = <HTMLLabelElement>document.querySelector('#label')!;
+const label = <HTMLLabelElement>document.getElementById('label');
 
-const minus$ = fromEvent<Event>(minus, 'click').pipe(map(() => -1));
-const plus$ = fromEvent<Event>(plus, 'click').pipe(map(() => 1));
+const buttons = Array.from(document.querySelectorAll('button'));
 
-merge(minus$, plus$)
+const buttonObservables: Observable<string | null>[] = buttons.map((button) =>
+  fromEvent(button, 'click').pipe(map(() => button.textContent))
+);
+
+let counter = new BehaviorSubject(0);
+
+merge(...buttonObservables)
   .pipe(
-    // starting value of the stream
-    startWith(0),
-    // state in functional way
-    scan((v: number, prevV: number) => v + prevV),
-    tap((value: number) => {
-      label.textContent = String(value);
+    tap((val) => {
+      val === '+' ? counter.next(counter.value + 1) : counter.next(counter.value - 1);
     })
   )
   .subscribe();
+
+counter.pipe(tap((val) => (label.textContent = val.toString()))).subscribe();
